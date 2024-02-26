@@ -1,6 +1,6 @@
 {
-  "extends": "expo/tsconfig.base", 
-  "compilerOptions": { 
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
     "jsx": "react-native",
     "baseUrl": ".",
     "paths": {
@@ -10,9 +10,9 @@
       "tests": [
         "tests/*"
       ],
-      "@components/*": [ 
+      "@components/*": [
         "src/components/*"
       ]
     }
-  }, 
+  },
 }

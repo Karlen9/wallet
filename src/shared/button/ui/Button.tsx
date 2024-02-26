@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
-import { Pressable, Text, StyleSheet } from "react-native";
+import { Pressable, StyleProp, StyleSheet, ViewStyle } from "react-native";
+import { Text } from "shared/text/ui/Text";
 import { Colors } from "shared/styles";
 
 export type TButtonTheme = "primary" | "secondary";
@@ -10,6 +11,7 @@ type TButtonProps = {
   theme: TButtonTheme;
   children?: ReactNode;
   leftIcon?: boolean;
+  style?: StyleProp<ViewStyle>;
 };
 
 export const Button = ({
@@ -18,17 +20,20 @@ export const Button = ({
   theme,
   children,
   leftIcon,
+  style,
 }: TButtonProps) => {
   return (
     <Pressable
-      style={theme === "primary" ? styles.primary : null}
+      style={[theme === "primary" ? styles.primary : null, style]}
       onPress={onPress}
     >
+      {leftIcon && children ? children : null}
       <Text
         style={theme === "primary" ? styles.buttonText : styles.secondaryText}
       >
-        {leftIcon && children} {title} {!leftIcon && children}
+        {title}
       </Text>
+      {!leftIcon && children ? children : null}
     </Pressable>
   );
 };

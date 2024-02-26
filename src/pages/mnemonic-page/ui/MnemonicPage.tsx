@@ -1,12 +1,14 @@
 import { useAuthStore, useMnemonicStore } from "app/store";
-import { Text, View, Pressable, Modal } from "react-native";
+import { View, Pressable, Modal } from "react-native";
+import { Text } from "shared";
 import QRCode from "react-native-qrcode-svg";
 import { Button, Colors, PageWrapper } from "shared";
 import uuid from "react-native-uuid";
 import { Word } from "./Word";
 import { useState } from "react";
-import Icon from "react-native-vector-icons/FontAwesome";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { modal, styles } from "./styles";
+import { StatusBar } from "react-native";
 
 export const MnemonicPage = ({ navigation }) => {
   const [isQrModal, setIsQrModal] = useState(false);
@@ -16,6 +18,8 @@ export const MnemonicPage = ({ navigation }) => {
 
   return (
     <PageWrapper>
+      <StatusBar barStyle="light-content" />
+
       <View style={styles.container}>
         <Modal
           animationType="slide"
@@ -28,12 +32,12 @@ export const MnemonicPage = ({ navigation }) => {
           <View style={modal.centeredView}>
             <View style={modal.modalView}>
               <QRCode size={200} value={mnemonic} />
-              <Pressable
-                style={[modal.button, modal.buttonClose]}
-                onPress={() => setIsQrModal(!isQrModal)}
-              >
-                <Text style={modal.textStyle}>Hide Modal</Text>
-              </Pressable>
+              <Button
+                style={{ marginTop: 30, padding: 10, width: 100 }}
+                theme="primary"
+                title="Hide"
+                onPress={() => setIsQrModal(false)}
+              />
             </View>
           </View>
         </Modal>
@@ -52,14 +56,13 @@ export const MnemonicPage = ({ navigation }) => {
                 display: "flex",
               }}
             >
-              <View style={{ position: "absolute", left: 0 }}>
+              <View style={{ position: "absolute", left: 0, top: -2 }}>
                 <Button
-                  title="Back"
                   onPress={() => navigation.navigate("Greeting")}
                   theme="secondary"
                   leftIcon
                 >
-                  <Icon name="arrow-left" />
+                  <Icon name="arrow-left" color={Colors.primary50} size={30} />
                 </Button>
               </View>
 
@@ -107,7 +110,7 @@ export const MnemonicPage = ({ navigation }) => {
             theme={"primary"}
             title={"Continue"}
             onPress={() => {
-              navigation.navigate("ConfirmMnemonic");
+              navigation.navigate("HomeScreen");
               setAuth(true);
             }}
           />

@@ -1,9 +1,11 @@
 import { useAccountStore, useAuthStore, useMnemonicStore } from "app/store";
 import { useCallback, useState } from "react";
-import { Text, View, StyleSheet, Image, Pressable } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { Button, Colors, PageWrapper } from "shared";
 import { createWalletClient, http } from "viem";
 import { goerli } from "viem/chains";
+import { Text } from "shared";
+import { StatusBar } from "react-native";
 
 import {
   english,
@@ -15,7 +17,6 @@ import {
 export const GreetingPage = ({ navigation }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { setAccount } = useAccountStore();
-  const { setAuth, isAuth } = useAuthStore();
   const { setMnemonic } = useMnemonicStore();
 
   const fetchAccount = useCallback(() => {
@@ -23,13 +24,20 @@ export const GreetingPage = ({ navigation }) => {
       const newMnemonic = generateMnemonic(english);
       const account = mnemonicToAccount(newMnemonic);
       const client = createWalletClient({
-        account,
+        // account,
         chain: goerli,
         transport: http(),
       });
-      resolve({ account, mnemonic: newMnemonic });
+      resolve({
+        account,
+        mnemonic: newMnemonic,
+      });
     });
   }, []);
+
+  const importWallet = () => {
+    navigation.navigate("ImportWallet");
+  };
 
   const createNewWallet = async () => {
     setIsLoading(true);
@@ -45,10 +53,11 @@ export const GreetingPage = ({ navigation }) => {
 
   return (
     <PageWrapper>
+      <StatusBar barStyle="light-content" />
       <View style={styles.content}>
         <View style={styles.mainContainer}>
           <Text style={styles.header}>
-            Meet the new {"\n"}secure {"\n"}crypto wallet.
+            {`Meet the new ${"\n"}secure ${"\n"}crypto wallet.`}
           </Text>
         </View>
         <View style={{ marginBottom: 30 }}>
@@ -56,6 +65,12 @@ export const GreetingPage = ({ navigation }) => {
             theme={"primary"}
             title={`${isLoading ? "Loading..." : "Create an account"}`}
             onPress={createNewWallet}
+          />
+          <Button
+            title="Import wallet"
+            style={{ marginTop: 20, width: "100%", alignItems: "center" }}
+            onPress={importWallet}
+            theme="secondary"
           />
         </View>
       </View>

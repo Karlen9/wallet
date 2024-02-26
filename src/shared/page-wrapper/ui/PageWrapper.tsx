@@ -5,12 +5,18 @@ import { ReactNode } from "react";
 
 const statusBarHeight = Constants.statusBarHeight;
 
-export const PageWrapper = ({ children }: { children: ReactNode }) => {
+export const PageWrapper = ({
+  children,
+  noPadding,
+}: {
+  children: ReactNode;
+  noPadding?: boolean;
+}) => {
   return (
     <View
       style={{
-        padding: 20,
-        paddingTop: statusBarHeight + 25,
+        padding: noPadding ? 0 : 20,
+        paddingTop: noPadding ? 0 : statusBarHeight + 25,
         backgroundColor: Colors.primary1000,
         height: "100%",
       }}

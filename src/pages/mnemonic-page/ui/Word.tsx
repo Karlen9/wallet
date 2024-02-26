@@ -1,12 +1,11 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
+import { Text } from "shared";
 import { Colors } from "shared";
 
 export const Word = ({ word, index }: { word: string; index: number }) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>
-        {index}. {word}
-      </Text>
+      <Text style={styles.text}>{`${index}. ${word}`}</Text>
     </View>
   );
 };

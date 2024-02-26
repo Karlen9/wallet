@@ -3,3 +3,4 @@ export * from "./styles";
 export * from "./button/ui/Button";
 export * from "./utils";
 export { PageWrapper } from "./page-wrapper/ui/PageWrapper";
+export { Text } from "./text/ui/Text";
