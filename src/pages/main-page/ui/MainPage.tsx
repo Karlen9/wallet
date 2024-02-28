@@ -22,7 +22,6 @@ export const MainPage = () => {
         }}
       >
         <UserActions />
-        <Text style={{ color: Colors.primary50 }}>Text</Text>
       </View>
     </PageWrapper>
   );

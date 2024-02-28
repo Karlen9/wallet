@@ -1,6 +1,5 @@
 import { View, StyleSheet } from "react-native";
-import { Text } from "shared";
-import { Colors } from "shared";
+import { Colors, Text } from "shared";
 
 type Position = "left" | "right" | "center";
 

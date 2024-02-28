@@ -1,91 +1,101 @@
-import { StatusBar, TextInput, View } from "react-native";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { Button, Colors, PageWrapper } from "shared";
-import { styles } from "./styles";
-import { Text } from "shared";
-import { mnemonicToAccount } from "viem/accounts";
-import { useAccountStore } from "app/store";
+import {
+  StatusBar,
+  TextInput,
+  KeyboardAvoidingView,
+  View,
+  Platform,
+  ActivityIndicator,
+} from "react-native";
+import { Button, Colors, PageWrapper, useImportAccount, Text } from "shared";
 import { useState } from "react";
+import { FontAwesome6 } from "@expo/vector-icons";
+import { styles } from "./styles";
 
 export const ImportWalletPage = ({ navigation }) => {
   const [mnemonic, setMnemonic] = useState("");
-  const [error, setError] = useState("false");
-  const { account, setAccount } = useAccountStore();
+  const { importAccount, isValid } = useImportAccount(mnemonic);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const importAcc = () => {
-    // if (!isValidMnemonic(mnemonic)) {
-    //   return setError("Invalid seed phrase");
-    // }
-    const account = mnemonicToAccount(mnemonic);
-    setAccount(account);
+  const onImport = () => {
+    setIsLoading(true);
+    setTimeout(() => {
+      importAccount().then(() => {
+        setIsLoading(false);
+        navigation.navigate("HomeScreen");
+      });
+    });
   };
+
   return (
     <PageWrapper>
-      <StatusBar barStyle="light-content" />
-
-      <View style={styles.container}>
-        <View style={{ height: "100%" }}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.container}
+      >
+        <StatusBar barStyle="light-content" />
+        <View>
+          <View>
+            <View style={{ position: "absolute", left: 0, top: 0 }}>
+              <Button
+                onPress={() => navigation.navigate("Greeting")}
+                theme="secondary"
+                leftIcon
+              >
+                <FontAwesome6
+                  name="chevron-left"
+                  color={Colors.primary50}
+                  size={24}
+                />
+              </Button>
+            </View>
+            <View style={styles.header}>
+              <Text style={styles.headerText}>Import existing wallet</Text>
+            </View>
+          </View>
           <View
             style={{
+              alignItems: "center",
               display: "flex",
-              flexDirection: "column",
-              rowGap: 30,
+              width: "100%",
+              marginTop: 30,
             }}
-          >
-            <View
-              style={{
-                alignItems: "center",
-                display: "flex",
-              }}
-            >
-              <View style={{ position: "absolute", left: 0, top: -2 }}>
-                <Button
-                  onPress={() => navigation.navigate("Greeting")}
-                  theme="secondary"
-                  leftIcon
-                >
-                  <Icon name="arrow-left" color={Colors.primary50} size={30} />
-                </Button>
+          ></View>
+          <View>
+            <TextInput
+              editable
+              multiline
+              numberOfLines={4}
+              style={
+                isValid || mnemonic === ""
+                  ? styles.textInput
+                  : styles.invalidTextInput
+              }
+              underlineColorAndroid="transparent"
+              returnKeyType="search"
+              autoCapitalize="none"
+              onChangeText={(value) => setMnemonic(value)}
+              value={mnemonic}
+              placeholder="Your seed phrase"
+              placeholderTextColor={Colors.primary50}
+            />
+            {isValid || mnemonic === "" ? null : (
+              <View style={styles.invalidTextContainer}>
+                <Text style={styles.invalidText}>Invalid mnemonic</Text>
               </View>
-              <View style={styles.header}>
-                <Text style={styles.headerText}>Import existing wallet</Text>
-              </View>
-            </View>
-            <View
-              style={{
-                alignItems: "center",
-                display: "flex",
-                width: "100%",
-                marginTop: 30,
-              }}
-            ></View>
+            )}
           </View>
-
-          <TextInput
-            multiline={true}
-            numberOfLines={4}
-            style={{
-              backgroundColor: Colors.primary500,
-              borderColor: Colors.primary300,
-              borderWidth: 1,
-              borderRadius: 8,
-              height: 200,
-              padding: 10,
-            }}
-            onChangeText={(value) => setMnemonic(value)}
-            value={mnemonic}
-          />
-
-          <Button
-            theme={"primary"}
-            title={"Import"}
-            onPress={() => {
-              importAcc();
-              navigation.navigate("HomeScreen");
-            }}
-          />
         </View>
-      </View>
+
+        <Button
+          disable={isLoading}
+          theme={"primary"}
+          style={styles.importButton}
+          title={!isLoading ? "Import" : ""}
+          onPress={onImport}
+        >
+          {isLoading ? <ActivityIndicator color={Colors.primary1000} /> : null}
+        </Button>
+      </KeyboardAvoidingView>
     </PageWrapper>
   );
 };

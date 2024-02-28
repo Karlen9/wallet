@@ -18,6 +18,13 @@ export const styles = StyleSheet.create({
   headerText: {
     color: Colors.primary50,
   },
+  warningContainer: {
+    alignItems: "center",
+    display: "flex",
+    width: "100%",
+    marginTop: 30,
+  },
+  warningText: { color: Colors.secondary500 },
   backButton: {
     position: "absolute",
     left: 0,

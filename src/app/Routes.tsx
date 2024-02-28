@@ -1,6 +1,7 @@
 import * as React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { Ionicons } from "@expo/vector-icons";
 import {
   ConfirmMnemonicPage,
   GreetingPage,
@@ -10,7 +11,6 @@ import {
   SwapPage,
 } from "pages";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import Icon from "react-native-vector-icons/MaterialIcons";
 import { Colors } from "shared";
 import { View } from "react-native";
 
@@ -51,7 +51,7 @@ const HomeScreen = () => {
         component={MainPage}
         options={() =>
           tabBarOptions(({ color, size }) => (
-            <Icon name="wallet" color={color} size={size} />
+            <Ionicons name="wallet-outline" color={color} size={size} />
           ))
         }
       />
@@ -60,7 +60,7 @@ const HomeScreen = () => {
         component={SwapPage}
         options={() =>
           tabBarOptions(({ color, size }) => (
-            <Icon name="sync" color={color} size={size} />
+            <Ionicons name="sync" color={color} size={size} />
           ))
         }
       />

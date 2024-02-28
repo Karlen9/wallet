@@ -25,4 +25,33 @@ export const styles = StyleSheet.create({
   backButtonText: {
     color: Colors.primary50,
   },
+  textInput: {
+    backgroundColor: Colors.primary500,
+    borderColor: Colors.primary300,
+    height: 200,
+    color: Colors.primary50,
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 10,
+  },
+  invalidTextInput: {
+    backgroundColor: Colors.primary500,
+    borderColor: Colors.secondary500,
+    height: 200,
+    color: Colors.primary50,
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 10,
+  },
+  invalidTextContainer: {
+    alignItems: "center",
+    width: "100%",
+    justifyContent: "center",
+  },
+  invalidText: {
+    color: Colors.secondary500,
+  },
+  importButton: {
+    marginBottom: 5,
+  },
 });

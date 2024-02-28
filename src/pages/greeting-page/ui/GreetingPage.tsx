@@ -1,54 +1,25 @@
-import { useAccountStore, useAuthStore, useMnemonicStore } from "app/store";
-import { useCallback, useState } from "react";
-import { View, StyleSheet } from "react-native";
-import { Button, Colors, PageWrapper } from "shared";
-import { createWalletClient, http } from "viem";
-import { goerli } from "viem/chains";
-import { Text } from "shared";
-import { StatusBar } from "react-native";
-
-import {
-  english,
-  mnemonicToAccount,
-  generateMnemonic,
-  HDAccount,
-} from "viem/accounts";
+import { useState } from "react";
+import { View, StatusBar, ActivityIndicator } from "react-native";
+import { Button, Colors, PageWrapper, Text } from "shared";
+import { useCreateAccount } from "shared/hooks/useCreateAccount";
+import styles from "./styles";
 
 export const GreetingPage = ({ navigation }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { setAccount } = useAccountStore();
-  const { setMnemonic } = useMnemonicStore();
-
-  const fetchAccount = useCallback(() => {
-    return new Promise((resolve) => {
-      const newMnemonic = generateMnemonic(english);
-      const account = mnemonicToAccount(newMnemonic);
-      const client = createWalletClient({
-        // account,
-        chain: goerli,
-        transport: http(),
-      });
-      resolve({
-        account,
-        mnemonic: newMnemonic,
-      });
-    });
-  }, []);
+  const { createAccount } = useCreateAccount();
 
   const importWallet = () => {
     navigation.navigate("ImportWallet");
   };
 
-  const createNewWallet = async () => {
+  const onCreateAccount = () => {
     setIsLoading(true);
-    return fetchAccount().then(
-      (result: { account: HDAccount; mnemonic: string }) => {
+    setTimeout(() => {
+      createAccount().then(() => {
         setIsLoading(false);
-        setAccount(result.account);
-        setMnemonic(result.mnemonic);
         navigation.navigate("Mnemonic");
-      }
-    );
+      });
+    });
   };
 
   return (
@@ -62,10 +33,15 @@ export const GreetingPage = ({ navigation }) => {
         </View>
         <View style={{ marginBottom: 30 }}>
           <Button
+            disable={isLoading}
             theme={"primary"}
-            title={`${isLoading ? "Loading..." : "Create an account"}`}
-            onPress={createNewWallet}
-          />
+            title={!isLoading ? "Create an account" : ""}
+            onPress={onCreateAccount}
+          >
+            {isLoading ? (
+              <ActivityIndicator color={Colors.primary1000} />
+            ) : null}
+          </Button>
           <Button
             title="Import wallet"
             style={{ marginTop: 20, width: "100%", alignItems: "center" }}
@@ -77,41 +53,3 @@ export const GreetingPage = ({ navigation }) => {
     </PageWrapper>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {},
-  content: {
-    flex: 1,
-    justifyContent: "space-between",
-    backgroundColor: "black",
-    margin: 0,
-    width: "100%",
-  },
-  form: {
-    width: "100%",
-  },
-  item: {},
-  createButton: {
-    marginBottom: 50,
-    width: "100%",
-    color: Colors.primary1000,
-    backgroundColor: Colors.primary300,
-    padding: 15,
-    borderRadius: 10,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  createButtonText: {
-    fontSize: 18,
-  },
-  header: {
-    color: "#6EDA2A",
-    fontSize: 50,
-    width: "100%",
-  },
-  mainContainer: {
-    marginTop: "auto",
-    marginBottom: "auto",
-  },
-});

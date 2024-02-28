@@ -1,17 +1,16 @@
+import { useState } from "react";
 import { useAuthStore, useMnemonicStore } from "app/store";
-import { View, Pressable, Modal } from "react-native";
-import { Text } from "shared";
+import { View, Modal, StatusBar } from "react-native";
 import QRCode from "react-native-qrcode-svg";
-import { Button, Colors, PageWrapper } from "shared";
+import { Button, Colors, PageWrapper, Text } from "shared";
 import uuid from "react-native-uuid";
 import { Word } from "./Word";
-import { useState } from "react";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { modal, styles } from "./styles";
-import { StatusBar } from "react-native";
+import { FontAwesome6 } from "@expo/vector-icons";
 
 export const MnemonicPage = ({ navigation }) => {
   const [isQrModal, setIsQrModal] = useState(false);
+  const [isSeedVisible, setIsSeedVisible] = useState(false);
   const { setAuth } = useAuthStore();
   const { mnemonic } = useMnemonicStore();
   const mnemonicArray = mnemonic.split(" ");
@@ -61,9 +60,7 @@ export const MnemonicPage = ({ navigation }) => {
                   onPress={() => navigation.navigate("Greeting")}
                   theme="secondary"
                   leftIcon
-                >
-                  <Icon name="arrow-left" color={Colors.primary50} size={30} />
-                </Button>
+                />
               </View>
 
               <View style={styles.header}>
@@ -75,20 +72,14 @@ export const MnemonicPage = ({ navigation }) => {
                 <Word
                   key={uuid.v4().toString()}
                   index={index + 1}
+                  blur={!isSeedVisible}
                   word={word}
                 />
               ))}
             </View>
           </View>
-          <View
-            style={{
-              alignItems: "center",
-              display: "flex",
-              width: "100%",
-              marginTop: 30,
-            }}
-          >
-            <Text style={{ color: Colors.secondary500 }}>
+          <View style={styles.warningContainer}>
+            <Text style={styles.warningText}>
               Keep the seed phrase in a safe place!
             </Text>
           </View>
@@ -99,8 +90,20 @@ export const MnemonicPage = ({ navigation }) => {
             onPress={() => setIsQrModal(true)}
             theme="secondary"
           >
-            <Icon name="qrcode" />
+            <FontAwesome6 name="qrcode" size={20} color={Colors.primary100} />
           </Button>
+          <Button
+            title={isSeedVisible ? "Hide seed" : "Show seed"}
+            theme="secondary"
+            onPress={() => setIsSeedVisible((prev) => !prev)}
+          >
+            <FontAwesome6
+              name={isSeedVisible ? "eye-slash" : "eye"}
+              size={20}
+              color={Colors.primary100}
+            />
+          </Button>
+
           {/* <TouchableOpacity onPress={() => {}}>
           <Button title="Copy" theme="secondary">
             <Icon name="clone" />
