@@ -18,10 +18,17 @@
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.rainingman.testwallet"
     },
     "plugins": [
-      "expo-font"
-    ]
+      "expo-font",
+      "expo-secure-store"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "1e077fe6-2e3f-4741-992e-e3ca99bd7e7b"
+      }
+    }
   }
 }

@@ -1,4 +1,4 @@
-import { HDAccount } from "viem";
+import { HDAccount, PrivateKeyAccount } from "viem";
 import { create } from "zustand";
 
 type AuthState = {
@@ -6,14 +6,14 @@ type AuthState = {
   setAuth: (value: boolean) => void;
 };
 
-type MnemonicState = {
-  mnemonic: string;
-  setMnemonic: (value: string) => void;
+type LoadingState = {
+  isLoading: boolean;
+  setIsLoading: (value: boolean) => void;
 };
 
 type AccountState = {
-  account: HDAccount;
-  setAccount: (value: HDAccount) => void;
+  account: HDAccount | PrivateKeyAccount;
+  setAccount: (value: HDAccount | PrivateKeyAccount) => void;
 };
 
 export const useAuthStore = create<AuthState>()((set) => ({
@@ -21,9 +21,9 @@ export const useAuthStore = create<AuthState>()((set) => ({
   setAuth: (value) => set({ isAuth: value }),
 }));
 
-export const useMnemonicStore = create<MnemonicState>()((set) => ({
-  mnemonic: "",
-  setMnemonic: (value) => set({ mnemonic: value }),
+export const useIsLoading = create<LoadingState>()((set) => ({
+  isLoading: false,
+  setIsLoading: (value) => set({ isLoading: value }),
 }));
 
 export const useAccountStore = create<AccountState>()((set) => ({

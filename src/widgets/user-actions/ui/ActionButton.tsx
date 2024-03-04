@@ -1,5 +1,5 @@
-import { View, StyleSheet } from "react-native";
-import { Colors, Text } from "shared";
+import { View, StyleSheet, Pressable } from "react-native";
+import { Button, Colors, Text } from "shared";
 
 type Position = "left" | "right" | "center";
 
@@ -7,16 +7,20 @@ type TActionButtonProps = {
   position: Position;
   title?: string;
   icon?: React.ReactNode;
+  onPress: () => void;
 };
 
 export const ActionButton = (props: TActionButtonProps) => {
-  const { position, title, icon } = props;
+  const { position, title, icon, onPress } = props;
 
   return (
-    <View style={[actionButton[position], actionButton.container]}>
+    <Pressable
+      style={[actionButton[position], actionButton.container]}
+      onPress={onPress}
+    >
       {icon && icon}
       <Text style={actionButton.textStyle}>{title.toUpperCase()}</Text>
-    </View>
+    </Pressable>
   );
 };
 
