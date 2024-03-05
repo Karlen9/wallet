@@ -4,8 +4,8 @@
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "web": "expo start --web",
     "postinstall": "node_modules/.bin/rn-nodeify --install fs,path,crypto --hack",
     "lint": "eslint .",
@@ -14,7 +14,7 @@
   "dependencies": {
     "@babel/runtime": "^7.24.0",
     "@expo-google-fonts/rubik": "^0.2.3",
-    "@okxweb3/crypto-lib": "^1.0.1",
+    "@expo/config-plugins": "^7.8.4",
     "@react-native-clipboard/clipboard": "^1.13.2",
     "@react-native-community/cli": "^12.3.6",
     "@react-navigation/bottom-tabs": "^6.5.14",
@@ -61,7 +61,10 @@
     "uint8array-tools": "^0.0.7",
     "viem": "^2.7.13",
     "wagmi": "^2.5.7",
-    "zustand": "^4.5.1"
+    "zustand": "^4.5.1",
+    "expo-camera": "~14.0.5",
+    "expo-image-picker": "~14.7.1",
+    "expo-barcode-scanner": "~12.9.3"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

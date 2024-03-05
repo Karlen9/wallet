@@ -1,9 +1,8 @@
-import { publicClient } from "app/publicClient";
+import { publicClient, testPublicClient } from "app/publicClient";
 import { useEffect, useState } from "react";
 import { Colors, Text } from "shared";
 import { toNumber } from "ethers";
 import { Hex } from "viem";
-import { LinearGradient } from "expo-linear-gradient";
 import { View } from "react-native";
 
 export const Token = ({
@@ -21,7 +20,7 @@ export const Token = ({
   const [balance, setBalance] = useState(0);
 
   const getBalance = async () => {
-    const data = (await publicClient.readContract({
+    const data = (await testPublicClient.readContract({
       address: tokenContract,
       abi: tokenABI,
       functionName: "balanceOf",

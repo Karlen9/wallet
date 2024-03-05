@@ -18,11 +18,11 @@ export const TokenContainer = ({ address }: { address: Hex }) => {
       tokenContact: contracts.USDC,
       tokenABI: erc20ABI,
     },
-    {
-      tokenName: "1inch",
-      tokenContact: contracts._1_inch,
-      tokenABI: _1_inchABI,
-    },
+    // {
+    //   tokenName: "1inch",
+    //   tokenContact: contracts._1_inch,
+    //   tokenABI: _1_inchABI,
+    // },
   ];
   return (
     <View style={{ padding: 20, flex: 1, justifyContent: "space-between" }}>

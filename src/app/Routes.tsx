@@ -7,6 +7,7 @@ import {
   ImportWalletPage,
   MainPage,
   MnemonicPage,
+  ScanPage,
   SwapPage,
 } from "pages";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -84,6 +85,7 @@ const Routing = () => {
         <Stack.Screen name="ImportWallet" component={ImportWalletPage} />
         <Stack.Screen name="HomeScreen" component={HomeScreen} />
         <Stack.Screen name="SendEth" component={SendEthPage} />
+        <Stack.Screen name="ScanPage" component={ScanPage} />
       </Stack.Navigator>
     </NavigationContainer>
   );

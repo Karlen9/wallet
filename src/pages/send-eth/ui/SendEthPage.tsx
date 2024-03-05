@@ -1,5 +1,4 @@
-import { testPublicClient } from "app/publicClient";
-import { ethers } from "ethers";
+import { ethers, FeeData, formatEther, parseUnits, Wallet } from "ethers";
 import { useEffect, useState } from "react";
 import {
   View,
@@ -9,60 +8,56 @@ import {
   StatusBar,
   Platform,
 } from "react-native";
-import { Button, Colors, PageWrapper, Text } from "shared";
+import { Button, Colors, PageWrapper, SendModal, Text } from "shared";
 import { useGetEthBalance } from "shared/hooks/useGetEthBalance";
 import { usePkeyToAddress } from "shared/hooks/usePkeyToAddress";
-import { Hex, SignTransactionParameters, isHex, parseEther } from "viem";
+import { Hex, isHex } from "viem";
 import { FontAwesome6 } from "@expo/vector-icons";
-
 import { sepolia } from "viem/chains";
-import { testWalletClient } from "app/testClient";
+import { getSigner } from "app/signer";
+import { provider } from "app/ethersProvider";
 
 export const SendEthPage = ({ navigation }) => {
   const [estFee, setEstFee] = useState("");
-  const [amount, setAmount] = useState("");
+  const [isSendModal, setIsSendModal] = useState(false);
+  const [amount, setAmount] = useState("0");
   const [toAddress, setToAddress] = useState<Hex>();
-  const [req, setReq] = useState<SignTransactionParameters>();
-
+  const [signer, setSigner] = useState<Wallet>();
   const { address } = usePkeyToAddress();
-  const { balance } = useGetEthBalance(address);
+  const { balance, refresh } = useGetEthBalance(address);
 
-  const isEnoughBalance = Number(balance) >= Number(amount);
+  useEffect(() => {
+    console.log({ balance });
+    getSigner().then((res) => setSigner(res));
+  }, []);
+
+  const txCost = Number(amount) + Number(estFee);
+  const isEnoughBalance = balance && Number(balance) >= txCost;
+
+  useEffect(() => {
+    console.log({ isEnoughBalance });
+  }, [isEnoughBalance]);
+
+  const transaction = {
+    from: address,
+    to: toAddress,
+    value: isEnoughBalance ? parseUnits(amount) : "0",
+    chainId: sepolia.id,
+  };
 
   const onSendEth = async () => {
-    console.log("afef");
-    const request = await testWalletClient.prepareTransactionRequest({
-      account: address,
-      to: toAddress,
-      value: parseEther(amount),
-      chain: sepolia,
-      maxFeePerGas: BigInt(8750000000000),
-      maxPriorityFeePerGas: BigInt(1000000000000000),
-
-      nonce: await testPublicClient.getTransactionCount({
-        address,
-      }),
-    });
-
-    setReq(request as SignTransactionParameters);
-    console.log("asdfhjlk");
-
-    const gasPrice = await testPublicClient.getGasPrice();
-    console.log("fefefeff" + gasPrice);
-    const gasLimit = await testPublicClient.estimateGas(request);
-    const estimateTxFee = ethers.formatEther((gasLimit * gasPrice).toString());
-    setEstFee(estimateTxFee);
+    if (!isEnoughBalance) return;
+    if (!signer) return;
+    const gasPrice = (await provider.getFeeData()).gasPrice;
+    const estimateGas = await signer?.estimateGas(transaction);
+    // const maxGasPrice = (await provider.getFeeData()).maxFeePerGas
+    // const gasPrice = new ethers.FeeData().gasPrice;
+    setEstFee(formatEther(estimateGas * gasPrice));
   };
 
   const onConfirm = async () => {
-    const signature = await testWalletClient.signTransaction(req);
-
-    const hash = await testWalletClient
-      .sendRawTransaction({
-        serializedTransaction: signature,
-      })
-      .finally(() => {});
-    console.log(hash);
+    if (!isEnoughBalance || !amount || !toAddress) return;
+    setIsSendModal(true);
   };
 
   useEffect(() => {
@@ -71,6 +66,15 @@ export const SendEthPage = ({ navigation }) => {
 
   return (
     <PageWrapper>
+      <SendModal
+        isOpen={isSendModal}
+        setIsOpen={setIsSendModal}
+        tx={transaction}
+        signer={signer}
+        txCost={txCost}
+        estFee={estFee}
+        navigation={navigation}
+      />
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{
@@ -106,16 +110,7 @@ export const SendEthPage = ({ navigation }) => {
             <Text style={styles.inputHeader}>Amount:</Text>
             <TextInput
               editable
-              style={{
-                borderWidth: 1,
-                borderColor: Colors.primary100,
-                paddingHorizontal: 8,
-                paddingVertical: 4,
-                borderRadius: 4,
-                width: "100%",
-                color: Colors.primary50,
-              }}
-              keyboardType="numeric"
+              style={styles.textInput}
               value={amount}
               onChangeText={(value) => setAmount(value)}
               underlineColorAndroid="transparent"
@@ -155,8 +150,20 @@ export const SendEthPage = ({ navigation }) => {
         >
           <Text style={styles.inputHeader}>{`Estimate fee: ${estFee}`}</Text>
         </View>
-        <View style={{ flexDirection: "row", columnGap: 10, marginTop: 30 }}>
-          <Button theme="primary" title="Next" onPress={onConfirm} />
+        <View
+          style={{
+            flexDirection: "row",
+            columnGap: 10,
+            marginTop: 30,
+            marginBottom: 10,
+          }}
+        >
+          <Button
+            disable={!isEnoughBalance || !amount || !toAddress}
+            theme="primary"
+            title="Next"
+            onPress={onConfirm}
+          />
         </View>
       </KeyboardAvoidingView>
     </PageWrapper>
@@ -183,9 +190,10 @@ export const styles = StyleSheet.create({
   textInput: {
     borderWidth: 1,
     borderColor: Colors.primary100,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
     borderRadius: 4,
+    fontSize: 12,
     width: "100%",
     color: Colors.primary50,
   },

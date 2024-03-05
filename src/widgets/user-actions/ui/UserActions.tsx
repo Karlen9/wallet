@@ -1,76 +1,47 @@
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Alert } from "react-native";
 import { styles } from "./styles";
 import { LinearGradient } from "expo-linear-gradient";
 import { ActionButton } from "./ActionButton";
-import { Colors, Text } from "shared";
+import { Button, Colors, Text } from "shared";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
-import { useGetEthBalance } from "shared/hooks/useGetEthBalance";
 import { Hex } from "viem";
-
+import { useEffect } from "react";
+import { useGetEthBalance } from "shared/hooks/useGetEthBalance";
 type TUserActionProps = {
   address?: Hex;
-  balance?: string;
   navigation: any;
 };
 
 export const UserActions = ({ address, navigation }: TUserActionProps) => {
-  const { balance } = useGetEthBalance(address);
-
-  // const onSendEth = async () => {
-  //   const request = await walletClient.prepareTransactionRequest({
-  //     account: address,
-  //     to: toAddress,
-  //     value: parseEther(amount),
-  //     chain: mainnet,
-  //     nonce: await publicClient.getTransactionCount({
-  //       address,
-  //     }),
-  //   });
-
-  //   const gasPrice = await publicClient.getGasPrice();
-  //   const gasLimit = await publicClient.estimateGas(request);
-  //   const estimateTxFee = ethers.formatEther((gasLimit * gasPrice).toString());
-  //   setEstFee(estimateTxFee);
-  //   setIsSendModal(true);
-  // };
-
-  // const sendEth = async () => {
-  //   const request = await walletClient.prepareTransactionRequest({
-  //     account: address,
-  //     to: toAddress,
-  //     value: parseEther(amount),
-  //     chain: mainnet,
-  //     nonce: await publicClient.getTransactionCount({
-  //       address,
-  //     }),
-  //   });
-
-  //   const gasPrice = await publicClient.getGasPrice();
-  //   const gasLimit = await publicClient.estimateGas(request);
-  //   const estimateTxFee = ethers.formatEther((gasLimit * gasPrice).toString());
-  //   // const gasLimit = estimateGas(request as SignTransactionParameters)
-
-  //   // const signature = await walletClient.signTransaction(
-  //   //   request as SignTransactionParameters
-  //   // );
-
-  //   // const hash = await walletClient
-  //   //   .sendRawTransaction({
-  //   //     serializedTransaction: signature,
-  //   //   })
-  //   //   .finally(() => {
-  //   //     setTransactionSend(true);
-  //   //   });
-
-  //   // console.log(hash);
-  // };
+  const { balance, refresh } = useGetEthBalance(address);
+  useEffect(() => {
+    refresh();
+  }, []);
 
   return (
     <LinearGradient style={styles.container} colors={["#CFF57E", "#ABE9FD"]}>
-      <View style={{ paddingVertical: 50 }}>
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          paddingHorizontal: 20,
+          paddingTop: 20,
+        }}
+      >
+        <Button theme="secondary">
+          <MaterialCommunityIcons name="exit-to-app" size={24} color="black" />
+        </Button>
+        <Button
+          theme="secondary"
+          onPress={() => navigation.navigate("ScanPage")}
+        >
+          <MaterialCommunityIcons name="qrcode-scan" size={24} color="black" />
+        </Button>
+      </View>
+      <View style={{ paddingVertical: 30 }}>
         <Text
           style={{ fontSize: 36, fontWeight: "bold" }}
-        >{`${balance.substring(0, 7)} ETH`}</Text>
+        >{`${balance?.substring(0, 8)} ETH`}</Text>
       </View>
       <Text>{address}</Text>
       <View style={styles.buttonContainer}>
@@ -110,29 +81,6 @@ export const UserActions = ({ address, navigation }: TUserActionProps) => {
     </LinearGradient>
   );
 };
-
-// console.log(account);
-
-// const onRecieve = async () => {
-//   try {
-//     await testClient.setBalance({
-//       address: account.address,
-//       value: parseEther("1"),
-//     });
-//   } catch (err) {
-//     console.log(err.message);
-//   }
-// };
-
-// const impersonateAccount = async () => {
-//   try {
-//     await testClient.impersonateAccount({
-//       address: account.address,
-//     });
-//   } catch (err) {
-//     console.log("impers err " + err);
-//   }
-// };
 
 const modal = StyleSheet.create({
   centeredView: {
