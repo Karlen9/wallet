@@ -1,5 +1,5 @@
-const extraNodeModules = require('node-libs-browser');
+import extraNodeModules from "node-libs-browser";
 
-module.exports = {
+export default {
   extraNodeModules,
 };

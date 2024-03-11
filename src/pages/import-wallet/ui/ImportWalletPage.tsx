@@ -3,35 +3,43 @@ import {
   TextInput,
   KeyboardAvoidingView,
   View,
-  Platform,
   ActivityIndicator,
 } from "react-native";
-import { Button, Colors, PageWrapper, useImportAccount, Text } from "shared";
-import { useState } from "react";
+import {
+  Button,
+  Colors,
+  PageWrapper,
+  useImportAccount,
+  Text,
+  getIsAuth,
+} from "shared";
+import { useEffect, useState } from "react";
 import { FontAwesome6 } from "@expo/vector-icons";
 import { styles } from "./styles";
+import { useAuthStore } from "app/store";
 
 export const ImportWalletPage = ({ navigation }) => {
-  const [mnemonic, setMnemonic] = useState("");
-  const { importAccount, isValid } = useImportAccount(mnemonic);
+  const [mnemonicOrPrKey, setMnemonicOrPrKey] = useState("");
+  const { importAccount, isValid } = useImportAccount(
+    mnemonicOrPrKey,
+    navigation
+  );
   const [isLoading, setIsLoading] = useState(false);
+  const { setAuth } = useAuthStore();
 
   const onImport = () => {
     setIsLoading(true);
-    setTimeout(() => {
-      importAccount().then(() => {
-        setIsLoading(false);
-        navigation.navigate("HomeScreen");
-      });
-    });
+    importAccount();
+    setIsLoading(false);
   };
+
+  useEffect(() => {
+    console.log("import " + getIsAuth());
+  }, [getIsAuth()]);
 
   return (
     <PageWrapper>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.container}
-      >
+      <KeyboardAvoidingView behavior="padding" style={styles.container}>
         <StatusBar barStyle="light-content" />
         <View>
           <View>
@@ -66,19 +74,19 @@ export const ImportWalletPage = ({ navigation }) => {
               multiline
               numberOfLines={4}
               style={
-                isValid || mnemonic === ""
+                isValid || mnemonicOrPrKey === ""
                   ? styles.textInput
                   : styles.invalidTextInput
               }
               underlineColorAndroid="transparent"
               returnKeyType="search"
               autoCapitalize="none"
-              onChangeText={(value) => setMnemonic(value)}
-              value={mnemonic}
-              placeholder="Your seed phrase"
-              placeholderTextColor={Colors.primary50}
+              onChangeText={(value) => setMnemonicOrPrKey(value)}
+              value={mnemonicOrPrKey}
+              placeholder="Private key or recovery phrase"
+              placeholderTextColor={Colors.primary100}
             />
-            {isValid || mnemonic === "" ? null : (
+            {isValid || mnemonicOrPrKey === "" ? null : (
               <View style={styles.invalidTextContainer}>
                 <Text style={styles.invalidText}>Invalid mnemonic</Text>
               </View>

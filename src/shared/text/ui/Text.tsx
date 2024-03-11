@@ -11,7 +11,11 @@ export const Text = ({
   children: string;
   style?: StyleProp<TextStyle>;
 }) => {
-  return <NativeText style={[styles.text, style]}>{children}</NativeText>;
+  return (
+    <NativeText selectable style={[styles.text, style]}>
+      {children}
+    </NativeText>
+  );
 };
 
 const styles = StyleSheet.create({

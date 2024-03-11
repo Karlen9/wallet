@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { View, StatusBar, ActivityIndicator } from "react-native";
-import { Button, Colors, PageWrapper, Text } from "shared";
+import { Button, Colors, PageWrapper, Text, getIsAuth } from "shared";
 import { useCreateAccount } from "shared/hooks/useCreateAccount";
 import styles from "./styles";
 
@@ -12,13 +12,16 @@ export const GreetingPage = ({ navigation }) => {
     navigation.navigate("ImportWallet");
   };
 
+  useEffect(() => {
+    console.log("getIsAuth " + getIsAuth());
+  }, []);
+
   const onCreateAccount = () => {
     setIsLoading(true);
     setTimeout(() => {
-      createAccount().then(() => {
-        setIsLoading(false);
-        navigation.navigate("Mnemonic");
-      });
+      createAccount();
+      setIsLoading(false);
+      navigation.navigate("Mnemonic");
     });
   };
 

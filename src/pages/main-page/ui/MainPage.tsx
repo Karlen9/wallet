@@ -1,12 +1,13 @@
-import { useAccountStore } from "app/store";
 import { View } from "react-native";
-import { Text } from "shared";
-import { Colors, PageWrapper } from "shared";
+import { PageWrapper } from "shared";
 import { UserActions } from "widgets/user-actions/ui/UserActions";
 import { StatusBar, Platform } from "react-native";
+import { useEffect } from "react";
+import { usePkeyToAddress } from "shared/hooks/usePkeyToAddress";
+import { useGetEthBalance } from "shared/hooks/useGetEthBalance";
 
-export const MainPage = () => {
-  const { account } = useAccountStore();
+export const MainPage = ({ navigation }) => {
+  const { address } = usePkeyToAddress();
   return (
     <PageWrapper noPadding>
       <StatusBar
@@ -21,7 +22,11 @@ export const MainPage = () => {
           alignItems: "center",
         }}
       >
-        <UserActions />
+        <UserActions navigation={navigation} address={address} />
+        {/* <TokenContainer address={address} /> */}
+        {/* <Button theme="primary" onPress={onDeleteAccount}>
+          <Text>Delete account</Text>
+        </Button> */}
       </View>
     </PageWrapper>
   );

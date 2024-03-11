@@ -1,27 +1,22 @@
-import { useAccountStore, useMnemonicStore } from "app/store";
-import { generateMnemonic } from "bip39";
+import { useAuthStore } from "app/store";
+import { Wallet, ethers } from "ethers";
 import { useState } from "react";
-import { HDAccount } from "viem";
-import { mnemonicToAccount } from "viem/accounts";
+import { storePrivateKey, storeUserMnemonic } from "shared/utils";
+import { Hex } from "viem";
 
 export const useCreateAccount = (): {
-  createAccount: () => Promise<{ account: HDAccount }>;
-  account: Promise<HDAccount>;
+  createAccount: () => void;
+  account: Wallet;
 } => {
-  const { setAccount } = useAccountStore();
-  const { setMnemonic } = useMnemonicStore();
-  const [createdAccount, setCreatedAccount] = useState(null);
+  const { setAuth } = useAuthStore();
+  const [address, setAddress] = useState(null);
   const createAccount = () => {
-    return new Promise<{ account: HDAccount }>((resolve) => {
-      const newMnemonic = generateMnemonic();
-      const account = mnemonicToAccount(newMnemonic);
-      setCreatedAccount(createdAccount);
-      setAccount(account);
-      setMnemonic(newMnemonic);
-
-      resolve({ account: createdAccount });
-    });
+    const wallet = ethers.Wallet.createRandom();
+    setAuth(true);
+    setAddress(wallet.address);
+    storePrivateKey(wallet.privateKey as Hex);
+    storeUserMnemonic(wallet.mnemonic.phrase);
   };
 
-  return { createAccount, account: createdAccount };
+  return { createAccount, account: address };
 };

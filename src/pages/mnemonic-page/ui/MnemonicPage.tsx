@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { useAuthStore, useMnemonicStore } from "app/store";
+import { useEffect, useState } from "react";
 import { View, Modal, StatusBar } from "react-native";
 import QRCode from "react-native-qrcode-svg";
 import { Button, Colors, PageWrapper, Text } from "shared";
@@ -7,12 +6,18 @@ import uuid from "react-native-uuid";
 import { Word } from "./Word";
 import { modal, styles } from "./styles";
 import { FontAwesome6 } from "@expo/vector-icons";
+import { getMenmonicFromStore } from "shared/utils/encrypted-store/getMnemonicFromStore";
 
 export const MnemonicPage = ({ navigation }) => {
   const [isQrModal, setIsQrModal] = useState(false);
+  const [mnemonic, setMnemonic] = useState("");
   const [isSeedVisible, setIsSeedVisible] = useState(false);
-  const { setAuth } = useAuthStore();
-  const { mnemonic } = useMnemonicStore();
+  useEffect(() => {
+    getMenmonicFromStore().then((mnemonic) => {
+      setMnemonic(mnemonic);
+    });
+  });
+
   const mnemonicArray = mnemonic.split(" ");
 
   return (
@@ -114,7 +119,6 @@ export const MnemonicPage = ({ navigation }) => {
             title={"Continue"}
             onPress={() => {
               navigation.navigate("HomeScreen");
-              setAuth(true);
             }}
           />
         </View>

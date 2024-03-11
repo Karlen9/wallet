@@ -3,16 +3,18 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Ionicons } from "@expo/vector-icons";
 import {
-  ConfirmMnemonicPage,
   GreetingPage,
   ImportWalletPage,
   MainPage,
   MnemonicPage,
+  ScanPage,
   SwapPage,
 } from "pages";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Colors } from "shared";
+import { Colors, getIsAuth } from "shared";
 import { View } from "react-native";
+import { useState } from "react";
+import { SendEthPage } from "pages/send-eth/ui/SendEthPage";
 
 const Tab = createBottomTabNavigator();
 
@@ -69,14 +71,21 @@ const HomeScreen = () => {
 };
 
 const Routing = () => {
+  const [isAuth, setIsAuth] = useState(false);
+
+  React.useEffect(() => {
+    setIsAuth(getIsAuth() === "user");
+  }, [getIsAuth()]);
+
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Greeting" component={GreetingPage} />
         <Stack.Screen name="Mnemonic" component={MnemonicPage} />
-        <Stack.Screen name="ConfirmMnemonic" component={ConfirmMnemonicPage} />
-        <Stack.Screen name="HomeScreen" component={HomeScreen} />
         <Stack.Screen name="ImportWallet" component={ImportWalletPage} />
+        <Stack.Screen name="HomeScreen" component={HomeScreen} />
+        <Stack.Screen name="SendEth" component={SendEthPage} />
+        <Stack.Screen name="ScanPage" component={ScanPage} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -1,12 +1,8 @@
 import { View, Text } from "react-native";
-import Icon from "react-native-vector-icons/FontAwesome";
-import { Button, PageWrapper, mnemonicToArray } from "shared";
+import { Button, PageWrapper } from "shared";
 import { styles } from "./styles";
-import { useMnemonicStore } from "app/store";
 
 export const ConfirmMnemonicPage = ({ navigation }) => {
-  const { mnemonic } = useMnemonicStore();
-  const mnemonicArray = mnemonicToArray(mnemonic);
   return (
     <PageWrapper>
       <View style={styles.container}>
@@ -22,9 +18,7 @@ export const ConfirmMnemonicPage = ({ navigation }) => {
               onPress={() => navigation.navigate("Greeting")}
               theme="secondary"
               leftIcon
-            >
-              <Icon name="arrow-left" />
-            </Button>
+            ></Button>
           </View>
 
           <View style={styles.header}>

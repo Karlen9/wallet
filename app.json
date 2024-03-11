@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "test-wallet",
+    "name": "CWallet",
     "slug": "test-wallet",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -13,15 +13,34 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access your camera",
+        "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone"
+      },
+      "bundleIdentifier": "com.rainingman.testwallet"
     },
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.rainingman.testwallet",
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "plugins": [
-      "expo-font"
-    ]
+      "expo-font",
+      "expo-secure-store",
+      "expo-camera",
+      "expo-image-picker",
+      "expo-barcode-scanner"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "1e077fe6-2e3f-4741-992e-e3ca99bd7e7b"
+      }
+    }
   }
 }

@@ -9,12 +9,12 @@ import {
 import { Text } from "shared/text/ui/Text";
 import { Colors } from "shared/styles";
 
-export type TButtonTheme = "primary" | "secondary";
+export type TButtonTheme = "primary" | "secondary" | "cancel";
 
 type TButtonProps = {
   title?: string;
   onPress?: () => void;
-  theme: TButtonTheme;
+  theme?: TButtonTheme;
   children?: ReactNode;
   leftIcon?: boolean;
   style?: StyleProp<ViewStyle>;
@@ -24,7 +24,7 @@ type TButtonProps = {
 export const Button = ({
   title,
   onPress,
-  theme,
+  theme = "primary",
   children,
   leftIcon,
   style,
@@ -32,19 +32,18 @@ export const Button = ({
 }: TButtonProps) => {
   return (
     <Pressable
-      style={[
-        styles.common,
-        theme === "primary" ? styles.primary : null,
-        disable && styles.disable,
-        style,
-      ]}
+      style={[styles.common, styles[theme], disable && styles.disable, style]}
       onPress={onPress}
       disabled={disable}
     >
       {leftIcon && children ? <View>{children}</View> : null}
       <Text
         style={[
-          theme === "primary" ? styles.buttonText : styles.secondaryText,
+          theme === "primary"
+            ? styles.buttonText
+            : theme === "secondary"
+            ? styles.secondaryText
+            : styles.buttonText,
           styles.commonText,
         ]}
       >
@@ -69,6 +68,13 @@ const styles = StyleSheet.create({
     color: Colors.primary100,
     alignItems: "center",
     justifyContent: "center",
+  },
+  cancel: {
+    backgroundColor: "transparent",
+    borderWidth: 1,
+    borderColor: Colors.primary300,
+    borderRadius: 10,
+    padding: 15,
   },
   buttonText: {
     alignItems: "center",

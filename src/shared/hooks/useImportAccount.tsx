@@ -1,31 +1,36 @@
-import { useAccountStore, useMnemonicStore } from "app/store";
-import { generateMnemonic, validateMnemonic, wordlists } from "bip39";
+import { validateMnemonic } from "bip39";
 import { useEffect, useState } from "react";
-import { HDAccount } from "viem";
-import { mnemonicToAccount } from "viem/accounts";
+import { isPrivateKey } from "../utils/is-private-key/isPrivateKey";
+import { ethers } from "ethers";
+import { storePrivateKey, storeUserMnemonic } from "shared/utils";
+import { Hex } from "viem";
 
 export const useImportAccount = (
-  mnemonic: string
+  mnemonicOrPrKey: string,
+  navigation: any
 ): {
   isValid: boolean;
-  importAccount: () => Promise<{ account: HDAccount }>;
+  importAccount: () => void;
 } => {
-  const { setAccount } = useAccountStore();
-  const { setMnemonic } = useMnemonicStore();
   const [isValid, setIsValid] = useState(false);
 
   useEffect(() => {
-    if (validateMnemonic(mnemonic.trim())) return setIsValid(true);
+    if (validateMnemonic(mnemonicOrPrKey.trim())) return setIsValid(true);
+    if (isPrivateKey(mnemonicOrPrKey)) return setIsValid(true);
     setIsValid(false);
-  }, [mnemonic]);
-  const importAccount = () => {
-    return new Promise<{ account: HDAccount }>((resolve) => {
-      const account = mnemonicToAccount(mnemonic);
-      setAccount(account);
-      setMnemonic(mnemonic);
+  }, [mnemonicOrPrKey]);
 
-      resolve({ account });
-    });
+  const importAccount = () => {
+    if (!isValid) return;
+    const isInputPKey = isPrivateKey(mnemonicOrPrKey);
+    const mnemonicWallet = isInputPKey
+      ? new ethers.Wallet(mnemonicOrPrKey)
+      : ethers.Wallet.fromPhrase(mnemonicOrPrKey);
+
+    !isInputPKey && storeUserMnemonic(mnemonicOrPrKey);
+    const privateKey = mnemonicWallet.privateKey as Hex;
+    storePrivateKey(privateKey);
+    navigation.navigate("HomeScreen");
   };
 
   return { importAccount, isValid };
